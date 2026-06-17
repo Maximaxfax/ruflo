@@ -191,6 +191,17 @@ grep -q "execCli(\[\s*'-y'\s*,\s*'metaharness@latest'" "$F" 2>/dev/null || \
 grep -q "cwd: opts" "$F" || miss="$miss no-cwd-passthrough"
 [[ -z "$miss" ]] && ok || bad "$miss"
 
+step "17z48. MCP-layer alertOnNewSeverity Phase 4 positive case (iter 85)"
+miss=""
+T="$ROOT/scripts/test-mcp-tools.mjs"
+grep -q "alertOnNewSeverity echoed in payload" "$T" 2>/dev/null || miss="$miss no-echo-assert"
+grep -q "alertOnNewSeverity exitCode=1 when triggered" "$T" 2>/dev/null || miss="$miss no-exit1-assert"
+grep -q "success===false when alert fires" "$T" 2>/dev/null || miss="$miss no-success-false-assert"
+grep -q "baselineNoFindings\|drift-baseline-no-findings.json" "$T" 2>/dev/null || miss="$miss no-synthetic-no-findings-fixture"
+# Phase 4 uses alertOnNewSeverity: 'info' (the input the test passes)
+grep -q "alertOnNewSeverity: 'info'" "$T" 2>/dev/null || miss="$miss no-info-input"
+[[ -z "$miss" ]] && ok || bad "$miss"
+
 step "17z47. all 3 compat tripwires present + executable (iter 84)"
 miss=""
 # Catches accidental deletion of any tripwire — would otherwise only
